@@ -305,3 +305,15 @@ describe('sharing', () => {
   })
 })
 void pool
+
+describe('concurrent edits of one card', () => {
+  it('changing only the description leaves a title changed by someone else intact (partial updates)', async () => {
+    const a = await Client.signUp(app.baseUrl)
+    const { id, snapshot } = await a.newBoard()
+    const cardId = newId()
+    await a.op(id, { type: 'card.add', id: cardId, columnId: snapshot.columns[0]!.id, title: 'Original', afterId: null })
+    await a.op(id, { type: 'card.update', id: cardId, title: 'Título nuevo de Ana' })
+    await a.op(id, { type: 'card.update', id: cardId, description: 'Descripción de Beto' }) // Beto's edit only carries the description
+    expect((await a.snapshot(id)).cards[0]).toMatchObject({ title: 'Título nuevo de Ana', description: 'Descripción de Beto', version: 3 })
+  })
+})
