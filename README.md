@@ -5,6 +5,8 @@ drag cards with the mouse **or the keyboard**, and keep working when the connect
 
 ![Board](docs/board.webp)
 
+**Live demo:** https://web-production-1e9f.up.railway.app — log in as `demo@demo.dev` in one window and `demo2@demo.dev` in a private/incognito window (both with password `demo-password`); both are members of the same board, so you can watch changes travel between them. Hosted on Railway with its own PostgreSQL. It is a shared demo, anyone can edit it.
+
 Stack: Node + Fastify, PostgreSQL 17 (hand-written SQL migrations, `pg`), React 19 + Vite, `@dnd-kit`, Server-Sent Events, `zod`.
 UI in Spanish.
 
@@ -90,7 +92,7 @@ npm run test:e2e  # 9 browser tests (Playwright), on a freshly created database
 
 The end-to-end tests drive real Chromium: mouse drag between and within columns, keyboard moves, column reorder/rename/delete,
 two users editing at once until both screens converge, a read-only member, and the offline scenario.
-`.github/workflows/ci.yml` runs typecheck and both suites (it has not run on GitHub yet — there is no repository).
+`.github/workflows/ci.yml` runs typecheck and both suites against a Postgres service; it passes on GitHub. (Its first run failed only in CI: dnd-kit swallows clicks for 50 ms after a drop and the faster machine clicked inside that window — the test now waits the way a person would.)
 
 ## Limitations (honest list)
 
@@ -107,7 +109,7 @@ two users editing at once until both screens converge, a read-only member, and t
 - The offline end-to-end test blocks the user's write requests; Playwright's own "offline" switch does not sever an SSE stream
   that is already open, so stream reconnection is verified at the integration level (kill the `LISTEN` connection, resume from
   `Last-Event-ID`) rather than in the browser.
-- Not deployed yet.
+- The live demo runs one instance on a small Railway plan, so the free-for-all board can be edited (or vandalised) by anyone; a redeploy keeps the data but does not reset it.
 
 ## Layout
 
