@@ -43,6 +43,9 @@ export async function drag(page: Page, from: Locator, to: Locator, where: 'top' 
   await page.mouse.move(a.x + a.width / 2 + 10, a.y + a.height / 2 + 10, { steps: 4 })
   await page.mouse.move(b.x + b.width / 2, y, { steps: 20 })
   await page.mouse.up()
+  // dnd-kit swallows any click for ~50 ms after a drop (so releasing the button never counts as a press). A person cannot click that
+  // fast, but a test on a fast machine can — CI did, and the click vanished. Wait the way a human would.
+  await page.waitForTimeout(150)
 }
 
 /** Second browser context signed up as another user, joined to the board through a real invite link. */
