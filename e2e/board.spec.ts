@@ -68,15 +68,19 @@ test('reorder and rename columns, and delete one with its cards', async ({ page 
   await expect(column(page, 'QA')).toBeVisible()
 
   const names = () => page.locator('[data-testid="column"] .column-name').evaluateAll((els) => els.map((e) => e.childNodes[0]!.textContent!.trim()))
-  expect(await names()).toEqual(['Por hacer', 'En curso', 'Hecho', 'QA'])
+  await expect.poll(names).toEqual(['Por hacer', 'En curso', 'Hecho', 'QA'])
   await drag(page, column(page, 'QA').getByRole('button', { name: /Mover columna/ }), column(page, 'Por hacer').locator('.column-head'))
   await expect.poll(names).toEqual(['QA', 'Por hacer', 'En curso', 'Hecho'])
 
-  page.once('dialog', (d) => d.accept())
   await column(page, 'QA').getByRole('button', { name: /Eliminar columna/ }).click()
+  await expect(page.getByRole('dialog')).toContainText('1 tarjeta') // it says what will be lost
+  await page.getByRole('dialog').getByRole('button', { name: 'Cancelar' }).click()
+  await expect(column(page, 'QA')).toBeVisible() // cancelling keeps the column
+  await column(page, 'QA').getByRole('button', { name: /Eliminar columna/ }).click()
+  await page.getByRole('dialog').getByRole('button', { name: 'Eliminar columna' }).click()
   await expect(column(page, 'QA')).toHaveCount(0)
   await page.reload()
-  expect(await names()).toEqual(['Por hacer', 'En curso', 'Hecho'])
+  await expect.poll(names).toEqual(['Por hacer', 'En curso', 'Hecho'])
 })
 
 test('access: anonymous visitors are sent to login; a stranger gets "not found" for someone else\'s board', async ({ page, browser }) => {

@@ -3,6 +3,7 @@ import { CSS } from '@dnd-kit/utilities'
 import { useState } from 'react'
 import type { Card, Column } from '../../shared/types'
 import { CardView } from './CardView'
+import { ConfirmDialog } from './ConfirmDialog'
 
 export function ColumnView({ column, cards, canEdit, onRename, onDelete, onAddCard, onEditCard }: {
   column: Column
@@ -18,6 +19,7 @@ export function ColumnView({ column, cards, canEdit, onRename, onDelete, onAddCa
   const [draft, setDraft] = useState('')
   const [renaming, setRenaming] = useState(false)
   const [name, setName] = useState(column.name)
+  const [confirmingDelete, setConfirmingDelete] = useState(false)
 
   const submitCard = () => {
     if (draft.trim()) onAddCard(draft.trim())
@@ -49,7 +51,7 @@ export function ColumnView({ column, cards, canEdit, onRename, onDelete, onAddCa
         {canEdit && !renaming && (
           <span className="column-tools">
             <button type="button" className="icon-btn" aria-label={`Renombrar columna ${column.name}`} onClick={() => { setName(column.name); setRenaming(true) }}>✎</button>
-            <button type="button" className="icon-btn" aria-label={`Eliminar columna ${column.name}`} onClick={() => { if (confirm(cards.length ? `¿Eliminar «${column.name}» y sus ${cards.length} tarjetas?` : `¿Eliminar «${column.name}»?`)) onDelete() }}>🗑</button>
+            <button type="button" className="icon-btn" aria-label={`Eliminar columna ${column.name}`} onClick={() => setConfirmingDelete(true)}>🗑</button>
           </span>
         )}
       </header>
@@ -79,6 +81,15 @@ export function ColumnView({ column, cards, canEdit, onRename, onDelete, onAddCa
       ) : (
         <button type="button" className="add-card-btn" onClick={() => setAdding(true)}>+ Añadir tarjeta<span className="sr-only"> en {column.name}</span></button>
       ))}
+      {confirmingDelete && (
+        <ConfirmDialog
+          title={`Eliminar «${column.name}»`}
+          message={cards.length ? `Se eliminarán también sus ${cards.length} ${cards.length === 1 ? 'tarjeta' : 'tarjetas'}. No se puede deshacer.` : 'La columna está vacía.'}
+          confirmLabel="Eliminar columna"
+          onConfirm={onDelete}
+          onCancel={() => setConfirmingDelete(false)}
+        />
+      )}
     </section>
   )
 }
