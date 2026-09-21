@@ -1,0 +1,11 @@
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: tablero
+      POSTGRES_PASSWORD: tablero
+      POSTGRES_DB: tablero
+    ports:
+      - "54330:5432"
+    tmpfs:
+      - /var/lib/postgresql/data   # throwaway dev/test database

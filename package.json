@@ -1,0 +1,45 @@
+{
+  "name": "tablero",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev:server": "node --watch --import tsx src/server/index.ts",
+    "dev:web": "vite",
+    "build": "vite build",
+    "start": "node --import tsx src/server/index.ts",
+    "typecheck": "tsc --noEmit",
+    "db:up": "docker compose up -d db && node --import tsx scripts/wait-db.ts",
+    "db:migrate": "node --import tsx scripts/migrate.ts",
+    "test": "vitest run",
+    "test:e2e": "node --import tsx scripts/e2e-db.ts && npm run build && playwright test"
+  },
+  "engines": {
+    "node": ">=20.9"
+  },
+  "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
+    "@fastify/cookie": "^11.1.2",
+    "@fastify/static": "^10.1.4",
+    "fastify": "^5.12.5",
+    "fractional-indexing": "^4.0.0",
+    "pg": "^8.23.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^26.6.2",
+    "@types/pg": "^8.23.1",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.0",
+    "vitest": "^4.1.11"
+  }
+}
