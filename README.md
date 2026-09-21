@@ -51,7 +51,7 @@ that `seq` numbers follow commit order within a board (which is what makes "resu
 inserts at the same spot and a storm of conflicting moves and deletes: no server error, no duplicate positions.
 
 ### Security
-- Tokens/sessions: scrypt password hashes, sessions stored as SHA-256 hashes, `HttpOnly` + `SameSite=Lax` cookie; 10 failed
+- Accounts: scrypt password hashes, sessions stored as SHA-256 hashes, `HttpOnly` + `SameSite=Lax` cookie; 10 failed
   logins in 15 minutes lock an account; unknown email and wrong password are indistinguishable.
 - **CSRF:** every state-changing request must carry a custom header, which a browser cannot add to a cross-site request without a
   CORS preflight (the server answers none); a test checks a valid session cookie alone is refused.
